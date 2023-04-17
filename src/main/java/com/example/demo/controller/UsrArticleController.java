@@ -9,12 +9,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.vo.Article;
 
-// 1-1. /usr/article/doDelete?id=1
-// 결과 -> 1번 글이 삭제되었습니다 or 1번 글은 존재하지 않습니다
-
-// 1-2. /usr/article/doModify?id=1
-// 결과 -> 1번 글이 수정되었습니다 + 수정된 게시물 리턴
-//         or 1번 글은 존재하지 않습니다
+// /usr/article/getArticle?id=1
+// 결과 -> 1번 글의 객체 데이터 or 1번 글은 존재하지 않습니다
 
 @Controller
 public class UsrArticleController {
@@ -87,6 +83,7 @@ public class UsrArticleController {
 	@ResponseBody
 	public Article doWrite(String title, String body) {
 		Article article = writeArticle(title, body);
+		
 		return article;
 	}
 	
@@ -108,7 +105,7 @@ public class UsrArticleController {
 	// 수정
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
-	public String doModify(int id, String title, String body) {
+	public Object doModify(int id, String title, String body) {		// Object
 		Article article = getArticle(id);
 		
 		if (article == null) {
@@ -117,7 +114,7 @@ public class UsrArticleController {
 		
 		modifyArticle(id, title, body);
 		
-		return id + "번 글이 수정되었습니다.";
+		return article;
 	}
 
 	// 목록
@@ -125,6 +122,19 @@ public class UsrArticleController {
 	@ResponseBody
 	public List<Article> getArticles() {
 		return articles;
+	}
+	
+	// 상세보기
+	@RequestMapping("/usr/article/getArticle")
+	@ResponseBody
+	public Object getArticleDetail(int id) {	// Object 사용 시 모든 타입 리턴 가능
+		Article article = getArticle(id);
+		
+		if (article == null) {
+			return id + "번 글은 존재하지 않습니다.";
+		}
+		
+		return article;
 	}
 	
 }
