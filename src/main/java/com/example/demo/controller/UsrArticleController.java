@@ -9,15 +9,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.vo.Article;
 
-// UsrArticleController
-
-// 1. /usr/article/doWrite
-// --> id, title, body로 이루어진 게시글 객체 생성 (title, body는 파라미터)
-// --> Article ArrayList에 add
-
-// 2. /usr/article/getArticles
-// --> add 했던 게시글들 출력
-
 @Controller
 public class UsrArticleController {
 	int lastArticleId;
@@ -26,11 +17,26 @@ public class UsrArticleController {
 	public UsrArticleController() {
 		lastArticleId = 0;
 		articles = new ArrayList<>();
+		
+		makeTestData();
 	}
 	
-	@RequestMapping("/usr/article/doWrite")
-	@ResponseBody
-	public Article doWrite(String title, String body) {
+	// 게시글 테스트 데이터 생성
+	private void makeTestData() {
+		for (int i = 1; i <= 10; i++) {
+			int id = lastArticleId + 1;
+			String title = "제목" + i;
+			String body = "내용" + i;
+			
+			Article article = new Article(id, title, body);
+			articles.add(article);
+			
+			lastArticleId++;
+		}
+	}
+	
+	// 작성 로직 생성 (중복 제거)
+	public Article writeArticle(String title, String body) {
 		int id = lastArticleId + 1;
 
 		Article article = new Article(id, title, body);
@@ -38,6 +44,13 @@ public class UsrArticleController {
 		
 		lastArticleId++;
 
+		return article;
+	}
+	
+	@RequestMapping("/usr/article/doWrite")
+	@ResponseBody
+	public Article doWrite(String title, String body) {
+		Article article = writeArticle(title, body);
 		return article;
 	}
 
